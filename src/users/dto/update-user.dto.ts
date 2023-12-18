@@ -13,9 +13,6 @@ export class UpdateUserDto {
   email?: string
 
   @IsOptional()
-  role_id?: string
-
-  @IsOptional()
   avatar?: string
 
   @ValidateIf((o) => typeof o.password === 'string' && o.password.length > 0)
