@@ -1,23 +1,19 @@
 import { Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { PaginatedResult } from 'src/interfaces/paginated-result.interface';
 import { User } from 'src/entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
-import { RequestWithUser } from 'src/interfaces/auth.interface';
+import { TokenPayload } from 'src/interfaces/auth.interface';
 
 @Controller('me')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(LocalAuthGuard)
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getUser(@Req() req: RequestWithUser): Promise<User> {
-    delete req.user.password
-    return req.user
+  async getUser(@Req() user: TokenPayload): Promise<User> {
+    return this.usersService.findById(user.sub)
   }
 
   @Get(':id')

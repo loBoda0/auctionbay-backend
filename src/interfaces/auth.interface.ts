@@ -4,7 +4,6 @@ import { Request } from 'express'
 export interface TokenPayload {
   name: string
   sub: string
-  type: JwtType
 }
 
 export interface RequestWithUser extends Request {
