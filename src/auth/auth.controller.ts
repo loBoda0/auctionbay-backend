@@ -11,6 +11,7 @@ import { Response } from 'express';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() body: RegisterUserDto): Promise<User> {
@@ -21,10 +22,13 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Req() req: RequestWithUser, @Res() res: Response): Promise<User> {
-    const access_token = this.authService.generateJwt(req.user)
+  async login(@Req() req: RequestWithUser, @Res({ passthrough: true }) res: Response): Promise<User> {
+    const access_token = await this.authService.generateJwt(req.user)
     res.header('Authorization', `Bearer ${access_token}`)
+    delete req.user.password
     return req.user
   }
+
+
 }
 
