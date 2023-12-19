@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { User } from 'src/entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { TokenPayload } from 'src/interfaces/auth.interface';
+import { TokenPayload, UserSubRequest } from 'src/interfaces/auth.interface';
 
 @Controller('me')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -12,8 +12,8 @@ export class UsersController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getUser(@Req() user: TokenPayload): Promise<User> {
-    return this.usersService.findById(user.sub)
+  async getUser(@Req() req: UserSubRequest): Promise<User> {
+    return this.usersService.findById(req.user.sub)
   }
 
   @Get(':id')

@@ -1,5 +1,6 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { Base } from "./base.entity";
+import { User } from "./user.entity";
 
 @Entity()
 export class Auction extends Base {
@@ -15,4 +16,8 @@ export class Auction extends Base {
   
   @Column()
   end_date: Date
+
+  @ManyToOne(() => User, (user) => user.auctions)
+  @JoinColumn({ name: 'user_id'})
+  auctioner: User
 }

@@ -1,7 +1,8 @@
 import { Exclude } from 'class-transformer'
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
 
 import { Base } from './base.entity'
+import { Auction } from './auction.entity'
 
 @Entity()
 export class User extends Base {
@@ -20,4 +21,7 @@ export class User extends Base {
   @Column({ nullable: true })
   @Exclude()
   password: string
+
+  @JoinColumn({ name: 'auction_id' })
+  auctions: Auction[]
 }

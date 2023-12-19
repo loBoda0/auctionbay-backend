@@ -30,7 +30,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
           secret: process.env.JWT_SECRET
         }
       )
-      console.log(payload)
+      request.user = payload
     } catch (error) {
       throw new UnauthorizedException()
     }
