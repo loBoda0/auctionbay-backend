@@ -26,10 +26,12 @@ export abstract class AbstractService {
     }
   }
 
-  async findById(id: string): Promise<any> {
+  async findById(id: string, relations = []): Promise<any> {
     try {
       const element = await this.repository.findOne({
         where: { id },
+        relations,
+        loadRelationIds: true,
       })
       if (!element) {
         throw new BadRequestException(`Cannot find element with id: ${id}`)

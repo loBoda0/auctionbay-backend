@@ -7,6 +7,6 @@ import { Auction } from 'src/entities/auction.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Auction])],
   controllers: [AuctionsController],
-  providers: [AuctionsService]
+  providers: [AuctionsService],
 })
 export class AuctionsModule {}
