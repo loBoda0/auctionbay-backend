@@ -20,7 +20,7 @@ export class AuctionsController {
   async create(@Req() req: UserSubRequest, @Body() createAuctionDto: CreateAuctionDto): Promise<Auction> {
     const updatedCreateAuctionDto = {
       ...createAuctionDto,
-      user_id: req.user.sub
+      auctioner: req.user.sub
     }
     return this.auctionsService.create(updatedCreateAuctionDto)
   }

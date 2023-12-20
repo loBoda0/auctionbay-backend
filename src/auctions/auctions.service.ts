@@ -13,6 +13,7 @@ export class AuctionsService extends AbstractService {
   }
 
   async create(createAuctionDto: CreateAuctionDto): Promise<Auction> {
+    console.log(createAuctionDto)
     try {
       const auction = this.auctionsRepository.create(createAuctionDto)
       return this.auctionsRepository.save(auction)

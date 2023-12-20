@@ -17,7 +17,7 @@ export class Auction extends Base {
   @Column()
   end_date: Date
 
-  @ManyToOne(() => User, (user) => user.auctions)
+  @ManyToOne(() => User, (user) => user)
   @JoinColumn({ name: 'user_id'})
   auctioner: User
 }
