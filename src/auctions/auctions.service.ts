@@ -16,7 +16,7 @@ export class AuctionsService extends AbstractService {
   async create(createAuctionDto: CreateAuctionDto): Promise<Auction> {
     try {
       const auction = this.auctionsRepository.create(createAuctionDto)
-      console.log(auction)
+
       return this.auctionsRepository.save(auction)
     } catch (error) {
       throw new BadRequestException('Something went wrong while creating a new auction.')

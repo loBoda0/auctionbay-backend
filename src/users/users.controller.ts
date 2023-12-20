@@ -41,8 +41,6 @@ export class UsersController {
   async upload(@UploadedFile() file, @Req() req: UserSubRequest): Promise<User> {
     const filename = file?.filename
 
-    console.log(filename)
-
     if (!filename) throw new BadRequestException('File must be a png, jpg/jpeg')
 
     const imagesFolderPath = join(process.cwd(), 'files')
