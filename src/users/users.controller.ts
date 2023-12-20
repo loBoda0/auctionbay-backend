@@ -1,4 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, Req, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from 'src/entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -8,6 +8,9 @@ import { CreateAuctionDto } from 'src/auctions/dto/create-auction.dto';
 import { AuctionsService } from 'src/auctions/auctions.service';
 import { Auction } from 'src/entities/auction.entity';
 import { UpdateAuctionDto } from 'src/auctions/dto/update-auction.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { join } from 'path';
+import { isFileExtensionSafe, removeFile, saveImageToStorage } from 'src/helpers/imageStorage';
 
 @Controller('me')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -32,22 +35,24 @@ export class UsersController {
     return this.usersService.create(createUserDto)
   }
 
-/*   @Post('upload/:id')
+  @Post('upload')
   @UseInterceptors(FileInterceptor('avatar', saveImageToStorage))
   @HttpCode(HttpStatus.CREATED)
-  async upload(@UploadedFile() file: Express.Multer.File, @Param('id') id: string): Promise<User> {
+  async upload(@UploadedFile() file, @Req() req: UserSubRequest): Promise<User> {
     const filename = file?.filename
+
+    console.log(filename)
 
     if (!filename) throw new BadRequestException('File must be a png, jpg/jpeg')
 
     const imagesFolderPath = join(process.cwd(), 'files')
     const fullImagePath = join(imagesFolderPath + '/' + file.filename)
     if (await isFileExtensionSafe(fullImagePath)) {
-      return this.usersService.updateUserImageId(id, filename)
+      return this.usersService.updateUserImageId(req.user.sub, filename)
     }
     removeFile(fullImagePath)
     throw new BadRequestException('File content does not match extension!')
-  } */
+  }
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
