@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { User } from 'src/entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { TokenPayload, UserSubRequest } from 'src/interfaces/auth.interface';
+import { UserSubRequest } from 'src/interfaces/auth.interface';
 import { CreateAuctionDto } from 'src/auctions/dto/create-auction.dto';
 import { AuctionsService } from 'src/auctions/auctions.service';
 import { Auction } from 'src/entities/auction.entity';
