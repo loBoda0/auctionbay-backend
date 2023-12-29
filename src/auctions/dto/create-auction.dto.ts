@@ -1,4 +1,5 @@
 import { IsDate, IsNotEmpty, IsNumber, IsUUID } from "class-validator";
+import { User } from "src/entities/user.entity";
 
 export class CreateAuctionDto {
 
@@ -18,5 +19,5 @@ export class CreateAuctionDto {
 
   @IsNotEmpty()
   @IsUUID()
-  user_id: string
+  user_id: User
 }

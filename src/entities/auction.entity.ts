@@ -20,4 +20,8 @@ export class Auction extends Base {
   @ManyToOne(() => User, (user) => user)
   @JoinColumn({ name: 'user_id'})
   auctioner: User
+
+  @ManyToOne(() => User, (user) => user)
+  @JoinColumn({ name: 'winner_id'})
+  winner: User | null
 }

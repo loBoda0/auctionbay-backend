@@ -6,11 +6,31 @@ import { PaginatedResult } from 'src/interfaces/paginated-result.interface';
 import { Repository } from 'typeorm';
 import { CreateAuctionDto } from './dto/create-auction.dto';
 import { UpdateAuctionDto } from './dto/update-auction.dto';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class AuctionsService extends AbstractService {
   constructor (@InjectRepository(Auction) private readonly auctionsRepository: Repository<Auction>) {
     super(auctionsRepository)
+  }
+
+  async findRelation(user: User, fieldName: string): Promise<Auction[]> {
+    const condition = {}
+    condition[fieldName] = {
+      id: user.id
+    }
+    /* condition['loadRelationIds'] = true */
+  
+    try {
+      const data = this.auctionsRepository.find({
+        where: condition,
+        loadRelationIds: true
+      })
+      return data
+    } catch (error) {
+      console.log(error)
+      throw new InternalServerErrorException('Something went wrong while fetching data.')
+    }
   }
 
   async create(createAuctionDto: CreateAuctionDto): Promise<Auction> {
@@ -24,7 +44,7 @@ export class AuctionsService extends AbstractService {
   }
 
   async update(user_id: string, id: string, updateAuctionDto: UpdateAuctionDto): Promise<Auction> {
-    const auction = (await this.findById(id, ['auctioner'])) as Auction
+    const auction = (await this.findById(id)) as Auction
     try {
       if (auction.auctioner.toString() !== user_id) {
         throw new BadRequestException("Can't update auctions from other users")

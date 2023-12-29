@@ -67,9 +67,10 @@ export class UsersController {
   @Post('auctions')
   @HttpCode(HttpStatus.CREATED)
   async createAuction(@Req() req: UserSubRequest, @Body() createAuctionDto: CreateAuctionDto): Promise<Auction> {
+    const user = await this.usersService.findById(req.user.sub)
     const updatedCreateAuctionDto = {
       ...createAuctionDto,
-      auctioner: req.user.sub
+      auctioner: user
     }
     return this.auctionsService.create(updatedCreateAuctionDto)
   }

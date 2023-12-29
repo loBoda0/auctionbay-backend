@@ -1,14 +1,18 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Patch, Post, Query, Req } from '@nestjs/common';
-import { PaginatedResult } from 'src/interfaces/paginated-result.interface';
+import { Controller, Get, HttpCode, HttpStatus, Query, Req } from '@nestjs/common';
 import { AuctionsService } from './auctions.service';
+import { Auction } from 'src/entities/auction.entity';
+import { UserSubRequest } from 'src/interfaces/auth.interface';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('auctions')
 export class AuctionsController {
-  constructor(private readonly  auctionsService: AuctionsService) {}
+  constructor(private readonly  auctionsService: AuctionsService, private readonly  usersService: UsersService) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(@Query('page') page: number): Promise<PaginatedResult> {
-    return this.auctionsService.paginate(page)
+  async findAll(@Req() req: UserSubRequest, @Query('type') type: string): Promise<Auction[]> {
+    if (! type) return this.auctionsService.findAll()
+    const user = await this.usersService.findById(req.user.sub)
+    return this.auctionsService.findRelation(user, type)
   }
 }

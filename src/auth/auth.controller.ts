@@ -25,6 +25,11 @@ export class AuthController {
   async login(@Req() req: RequestWithUser, @Res({ passthrough: true }) res: Response): Promise<[User, string]> {
     const access_token = await this.authService.generateJwt(req.user)
     delete req.user.password
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
     return [req.user, access_token]
   }
 

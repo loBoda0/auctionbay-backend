@@ -8,13 +8,15 @@ export abstract class AbstractService {
 
   async findAll(): Promise<any[]> {
     try {
-      return this.repository.find()
+      return this.repository.find({
+        loadRelationIds: true,
+      })
     } catch (error) {
       throw new InternalServerErrorException('Something went wrong while searching for a list of elements.')
     }
   }
 
-  async findBy(condition): Promise<any> {
+  async findBy(condition = {}): Promise<any> {
     try {
       return this.repository.findOne({
         where: condition,
