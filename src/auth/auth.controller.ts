@@ -22,7 +22,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Req() req: RequestWithUser, @Res({ passthrough: true }) res: Response): Promise<[User, string]> {
+  async login(@Req() req: RequestWithUser, @Res({ passthrough: true }) res: Response): Promise<User> {
     const access_token = await this.authService.generateJwt(req.user)
     delete req.user.password
     res.cookie('access_token', access_token, {
@@ -30,7 +30,7 @@ export class AuthController {
       sameSite: 'none',
       secure: true,
     });
-    return [req.user, access_token]
+    return req.user
   }
 
 }
