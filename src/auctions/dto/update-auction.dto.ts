@@ -14,7 +14,10 @@ export class UpdateAuctionDto {
   
   @IsOptional()
   end_date?: Date
+  
+  @IsOptional()
+  image?: string
 
-  @IsNotEmpty()
-  auctioner: string
+  @IsOptional()
+  auctioner?: string
 }

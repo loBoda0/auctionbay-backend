@@ -56,6 +56,7 @@ export class AuctionsService extends AbstractService {
 
   async update(user_id: string, id: string, updateAuctionDto: UpdateAuctionDto): Promise<Auction> {
     const auction = (await this.findById(id)) as Auction
+    console.log(auction)
     try {
       if (auction.auctioner.toString() !== user_id) {
         throw new BadRequestException("Can't update auctions from other users")
@@ -66,6 +67,7 @@ export class AuctionsService extends AbstractService {
         description: updateAuctionDto.description !== undefined ? updateAuctionDto.description : auction.description,
         starting_price: updateAuctionDto.starting_price !== undefined ? updateAuctionDto.starting_price : auction.starting_price,
         end_date: updateAuctionDto.end_date !== undefined ? updateAuctionDto.end_date : auction.end_date,
+        image: updateAuctionDto.image !== undefined ? updateAuctionDto.image : auction.description
       }
 
       return this.auctionsRepository.save(updatedAuction)
@@ -109,6 +111,13 @@ export class AuctionsService extends AbstractService {
       }
     } catch (error) {
       throw new InternalServerErrorException('Something went wrong while searching for a paginated elements.')
+    }
+  }
+
+  async updateAuctionImageId(auctionId: string, userId: string, image: string): Promise<Auction> {
+    const auction = await this.findById(auctionId) as Auction
+    if (auction.auctioner.toString() == userId) {
+      return this.update(userId, auctionId, { image })
     }
   }
 
