@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { Base } from "./base.entity";
 import { User } from "./user.entity";
+import { Bid } from "./bid.entity";
 
 @Entity()
 export class Auction extends Base {
@@ -17,11 +18,22 @@ export class Auction extends Base {
   @Column()
   end_date: Date
 
-  @ManyToOne(() => User, (user) => user)
+  @Column({default: null})
+  image: string | null
+
+  @Column('boolean', {default: true})
+  is_active: boolean
+
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id'})
   auctioner: User
 
-  @ManyToOne(() => User, (user) => user)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'winner_id'})
   winner: User | null
+
+  @OneToMany(() => Bid, (bid) => bid.auction, {
+    eager: true
+  })
+  bids: Bid[]
 }

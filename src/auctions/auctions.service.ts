@@ -14,19 +14,30 @@ export class AuctionsService extends AbstractService {
     super(auctionsRepository)
   }
 
-  async findRelation(user: User, fieldName: string): Promise<Auction[]> {
-    const condition = {}
-    condition[fieldName] = {
-      id: user.id
-    }
-    /* condition['loadRelationIds'] = true */
-  
+  async findMyAuctions(user: User): Promise<Auction[]> {
     try {
-      const data = this.auctionsRepository.find({
-        where: condition,
+      return this.auctionsRepository.find({
+        where: {
+          auctioner: {
+            id: user.id
+          }
+        },
         loadRelationIds: true
       })
-      return data
+    } catch (error) {
+      throw new InternalServerErrorException('Something went wrong while fetching data.')
+    }
+  }
+
+  async findWonAuctions(user: User): Promise<Auction[]> {
+    try {
+      return this.auctionsRepository.find({
+        where: {
+          winner: {
+            id: user.id
+          }
+        }
+      })
     } catch (error) {
       console.log(error)
       throw new InternalServerErrorException('Something went wrong while fetching data.')
