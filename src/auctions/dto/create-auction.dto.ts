@@ -14,8 +14,7 @@ export class CreateAuctionDto {
   starting_price: number
   
   @IsNotEmpty()
-  @IsDate()
-  end_date: Date
+  end_date: string
 
   @IsNotEmpty()
   @IsUUID()

@@ -16,7 +16,7 @@ export class Auction extends Base {
   starting_price: number
   
   @Column()
-  end_date: Date
+  end_date: string
 
   @Column({default: null})
   image: string | null

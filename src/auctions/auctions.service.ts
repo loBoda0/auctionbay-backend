@@ -56,7 +56,6 @@ export class AuctionsService extends AbstractService {
 
   async update(user_id: string, id: string, updateAuctionDto: UpdateAuctionDto): Promise<Auction> {
     const auction = (await this.findById(id)) as Auction
-    console.log(auction)
     try {
       if (auction.auctioner.toString() !== user_id) {
         throw new BadRequestException("Can't update auctions from other users")

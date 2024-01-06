@@ -4,10 +4,6 @@ import { User } from 'src/entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserSubRequest } from 'src/interfaces/auth.interface';
-import { CreateAuctionDto } from 'src/auctions/dto/create-auction.dto';
-import { AuctionsService } from 'src/auctions/auctions.service';
-import { Auction } from 'src/entities/auction.entity';
-import { UpdateAuctionDto } from 'src/auctions/dto/update-auction.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { isFileExtensionSafe, removeFile, saveImageToStorage } from 'src/helpers/imageStorage';
@@ -15,7 +11,7 @@ import { isFileExtensionSafe, removeFile, saveImageToStorage } from 'src/helpers
 @Controller('me')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
-  constructor(private readonly usersService: UsersService, private readonly auctionsService: AuctionsService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -62,32 +58,5 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id') id: string): Promise<User> {
     return this.usersService.remove(id)
-  }
-
-  @Post('auctions')
-  @HttpCode(HttpStatus.CREATED)
-  async createAuction(@Req() req: UserSubRequest, @Body() createAuctionDto: CreateAuctionDto): Promise<Auction> {
-    const user = await this.usersService.findById(req.user.sub)
-    const updatedCreateAuctionDto = {
-      ...createAuctionDto,
-      auctioner: user
-    }
-    return this.auctionsService.create(updatedCreateAuctionDto)
-  }
-
-  @Patch('auctions/:id')
-  @HttpCode(HttpStatus.CREATED)
-  async updateAuction(@Req() req: UserSubRequest, @Param('id') id: string, @Body() updateAuctionDto: UpdateAuctionDto): Promise<Auction> {
-    const updatedUpdateAuctionDto = {
-      ...updateAuctionDto,
-    }
-    return this.auctionsService.update(req.user.sub, id, updatedUpdateAuctionDto)
-  }
-
-  
-  @Delete('auctions/:id')
-  @HttpCode(HttpStatus.CREATED)
-  async deleteAuction(@Req() req: UserSubRequest, @Param('id') id: string): Promise<any> {
-    return this.auctionsService.delete(req.user.sub, id)
   }
 }
