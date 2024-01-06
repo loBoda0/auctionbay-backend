@@ -14,7 +14,7 @@ export class AuthController {
   @Public()
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
-  async register(@Body() body: RegisterUserDto): Promise<User> {
+    async register(@Body() body: RegisterUserDto): Promise<User> {
     return this.authService.register(body)
   }
 
@@ -24,11 +24,14 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(@Req() req: RequestWithUser, @Res({ passthrough: true }) res: Response): Promise<User> {
     const access_token = await this.authService.generateJwt(req.user)
-    res.header('Authorization', `Bearer ${access_token}`)
     delete req.user.password
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
     return req.user
   }
-
 
 }
 

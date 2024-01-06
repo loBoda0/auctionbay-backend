@@ -1,7 +1,8 @@
 import { Exclude } from 'class-transformer'
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
+import { Column, Entity, OneToMany } from 'typeorm'
 
 import { Base } from './base.entity'
+import { Auction } from './auction.entity'
 
 @Entity()
 export class User extends Base {
