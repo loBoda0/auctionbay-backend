@@ -8,13 +8,15 @@ export abstract class AbstractService {
 
   async findAll(): Promise<any[]> {
     try {
-      return this.repository.find()
+      return this.repository.find({
+        loadRelationIds: true,
+      })
     } catch (error) {
       throw new InternalServerErrorException('Something went wrong while searching for a list of elements.')
     }
   }
 
-  async findBy(condition): Promise<any> {
+  async findBy(condition = {}): Promise<any> {
     try {
       return this.repository.findOne({
         where: condition,
@@ -26,10 +28,12 @@ export abstract class AbstractService {
     }
   }
 
-  async findById(id: string): Promise<any> {
+  async findById(id: string, relations = []): Promise<any> {
     try {
       const element = await this.repository.findOne({
         where: { id },
+        relations,
+        loadRelationIds: true,
       })
       if (!element) {
         throw new BadRequestException(`Cannot find element with id: ${id}`)

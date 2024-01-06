@@ -10,6 +10,10 @@ export interface RequestWithUser extends Request {
   user: User
 }
 
+export interface UserSubRequest {
+  user: { sub: string }
+}
+
 export enum JwtType {
   ACCESS_TOKEN = 'ACCESS_TOKEN',
 }
