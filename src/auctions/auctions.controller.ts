@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { AuctionsService } from './auctions.service';
 import { Auction } from 'src/entities/auction.entity';
 import { UserSubRequest } from 'src/interfaces/auth.interface';
@@ -86,9 +86,10 @@ export class AuctionsController {
     throw new BadRequestException('File content does not match extension!')
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async findById(@Param('id') id: string): Promise<Auction[]> {
-    return this.auctionsService.findById(id)
+  async findById(@Param('id') id: string): Promise<Auction> {
+    return this.auctionsService.findById(id, ['bids', 'bids.bidder'])
   }
 }

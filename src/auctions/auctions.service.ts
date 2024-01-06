@@ -77,7 +77,7 @@ export class AuctionsService extends AbstractService {
   }
 
   async delete(user_id: string, id: string) {
-    const auction = (await this.findById(id, ['auctioner'])) as Auction
+    const auction = (await this.findById(id)) as Auction
     try {
       if (auction.auctioner.toString() !== user_id) {
         throw new BadRequestException("Can't delete auctions from other users")

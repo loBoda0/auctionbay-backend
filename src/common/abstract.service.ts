@@ -32,8 +32,7 @@ export abstract class AbstractService {
     try {
       const element = await this.repository.findOne({
         where: { id },
-        relations,
-        loadRelationIds: true,
+        relations
       })
       if (!element) {
         throw new BadRequestException(`Cannot find element with id: ${id}`)
