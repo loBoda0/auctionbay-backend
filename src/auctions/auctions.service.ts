@@ -7,25 +7,45 @@ import { Repository } from 'typeorm';
 import { CreateAuctionDto } from './dto/create-auction.dto';
 import { UpdateAuctionDto } from './dto/update-auction.dto';
 import { User } from 'src/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuctionsService extends AbstractService {
-  constructor (@InjectRepository(Auction) private readonly auctionsRepository: Repository<Auction>) {
+  constructor (@InjectRepository(Auction) private readonly auctionsRepository: Repository<Auction>, private readonly  usersService: UsersService) {
     super(auctionsRepository)
   }
 
-  async findMyAuctions(user: User): Promise<Auction[]> {
+  async findMyAuctions(userId: string): Promise<Auction[]> {
+    const user = await this.getUser(userId)
     try {
       return this.auctionsRepository.find({
         where: {
           auctioner: {
-            id: user.id
+            id: userId
           }
         },
         loadRelationIds: true
       })
     } catch (error) {
-      throw new InternalServerErrorException('Something went wrong while fetching data.')
+      throw new InternalServerErrorException('Something went wrong while fetching my auctions.')
+    }
+  }
+
+  async findBiddingAuctions(userId: string): Promise<Auction[]> {
+    try {
+      return this.auctionsRepository.find({
+        where: {
+          bids: {
+            bidder: {
+              id: userId
+            }
+          },
+          is_active: true
+        },
+        loadRelationIds: true
+      })
+    } catch (error) {
+      throw new InternalServerErrorException('Something went wrong while fetching bidding auctions.')
     }
   }
 
@@ -35,7 +55,8 @@ export class AuctionsService extends AbstractService {
         where: {
           winner: {
             id: user.id
-          }
+          },
+          is_active: false
         }
       })
     } catch (error) {
@@ -118,6 +139,10 @@ export class AuctionsService extends AbstractService {
     if (auction.auctioner.toString() == userId) {
       return this.update(userId, auctionId, { image })
     }
+  }
+
+  async getUser(user: string): Promise<User> {
+    return await this.usersService.findById(user)
   }
 
 }

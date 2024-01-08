@@ -51,16 +51,14 @@ export class AuctionsController {
   @Get('my')
   @HttpCode(HttpStatus.OK)
   async findMyAuctions(@Req() req: UserSubRequest): Promise<Auction[]> {
-    const user = await this.usersService.findById(req.user.sub)
-    return this.auctionsService.findMyAuctions(user)
+    return this.auctionsService.findMyAuctions(req.user.sub)
   }
 
-/*   @Get('my')
+  @Get('bidding')
   @HttpCode(HttpStatus.OK)
-  async findRelations(@Req() req: UserSubRequest, @Query('type') type: string): Promise<Auction[]> {
-    const user = await this.usersService.findById(req.user.sub)
-    return this.auctionsService.findRelation(user, type)
-  }*/
+  async findRelations(@Req() req: UserSubRequest): Promise<Auction[]> {
+    return this.auctionsService.findBiddingAuctions(req.user.sub)
+  }
 
   @Get('won')
   @HttpCode(HttpStatus.OK)
