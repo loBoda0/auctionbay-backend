@@ -5,10 +5,11 @@ import { Bid } from 'src/entities/bid.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { AuctionsService } from 'src/auctions/auctions.service';
+import { Auction } from 'src/entities/auction.entity';
 
 @Injectable()
 export class BidsService extends AbstractService {
-  constructor(@InjectRepository(Bid) private readonly bidsRepository: Repository<Bid>, private readonly usersService: UsersService, private readonly auctionsService: AuctionsService
+  constructor(@InjectRepository(Bid) private readonly bidsRepository: Repository<Bid>,@InjectRepository(Auction) private readonly auctionsRepository: Repository<Auction>, private readonly usersService: UsersService, private readonly auctionsService: AuctionsService
   ) {
     super(bidsRepository)
   }
@@ -21,7 +22,8 @@ export class BidsService extends AbstractService {
 
     try {
       const bid = this.bidsRepository.create({bidder: user, auction, bid_amount})
-
+      auction.winner = user
+      this.auctionsRepository.save(auction)
       return this.bidsRepository.save(bid)
     } catch (error) {
       throw new BadRequestException('Something went wrong while posting a bid.')

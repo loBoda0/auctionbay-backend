@@ -33,7 +33,6 @@ export class Auction extends Base {
   winner: User | null
 
   @OneToMany(() => Bid, (bid) => bid.auction, {
-    eager: true,
     cascade: true 
   })
   bids: Bid[]

@@ -76,9 +76,9 @@ export class AuctionsService extends AbstractService {
   }
 
   async update(user_id: string, id: string, updateAuctionDto: UpdateAuctionDto): Promise<Auction> {
-    const auction = (await this.findById(id)) as Auction
+    const auction = (await this.findById(id, ['auctioner'])) as Auction
     try {
-      if (auction.auctioner.toString() !== user_id) {
+      if (auction.auctioner.id !== user_id) {
         throw new BadRequestException("Can't update auctions from other users")
       }
       const updatedAuction: any = {
@@ -88,7 +88,6 @@ export class AuctionsService extends AbstractService {
         starting_price: updateAuctionDto.starting_price !== undefined ? updateAuctionDto.starting_price : auction.starting_price,
         end_date: updateAuctionDto.end_date !== undefined ? updateAuctionDto.end_date : auction.end_date,
         image: updateAuctionDto.image !== undefined ? updateAuctionDto.image : auction.image,
-        bids: auction.bids
       }
       return this.auctionsRepository.save(updatedAuction)
     } catch (error) {
@@ -99,9 +98,9 @@ export class AuctionsService extends AbstractService {
   }
 
   async delete(user_id: string, id: string) {
-    const auction = (await this.findById(id)) as Auction
+    const auction = (await this.findById(id, ['auctioner'])) as Auction
     try {
-      if (auction.auctioner.toString() !== user_id) {
+      if (auction.auctioner.id !== user_id) {
         throw new BadRequestException("Can't delete auctions from other users")
       }
 

@@ -88,6 +88,6 @@ export class AuctionsController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findById(@Param('id') id: string): Promise<Auction> {
-    return this.auctionsService.findById(id, ['bids', 'bids.bidder'])
+    return this.auctionsService.findById(id, ['bids', 'bids.bidder', 'winner'])
   }
 }
