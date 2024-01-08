@@ -15,7 +15,7 @@ export class BidsController {
   
   @Post(':id')
   @HttpCode(HttpStatus.OK)
-  async placeBid(@Req() req: UserSubRequest, @Param(':id') auctionId: string, @Body('bid_amount')  bid_amount: number): Promise<Bid> {
+  async placeBid(@Req() req: UserSubRequest, @Param('id') auctionId: string, @Body('bid_amount')  bid_amount: number): Promise<Bid> {
     return this.bidsService.create(req.user.sub, auctionId, bid_amount)
   }
 }

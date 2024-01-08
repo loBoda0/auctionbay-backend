@@ -87,11 +87,12 @@ export class AuctionsService extends AbstractService {
         description: updateAuctionDto.description !== undefined ? updateAuctionDto.description : auction.description,
         starting_price: updateAuctionDto.starting_price !== undefined ? updateAuctionDto.starting_price : auction.starting_price,
         end_date: updateAuctionDto.end_date !== undefined ? updateAuctionDto.end_date : auction.end_date,
-        image: updateAuctionDto.image !== undefined ? updateAuctionDto.image : auction.description
+        image: updateAuctionDto.image !== undefined ? updateAuctionDto.image : auction.image,
+        bids: auction.bids
       }
-
       return this.auctionsRepository.save(updatedAuction)
     } catch (error) {
+      console.log(error)
       throw new BadRequestException("Something went wrong")
     }
    
