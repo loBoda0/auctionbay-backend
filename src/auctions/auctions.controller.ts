@@ -16,7 +16,6 @@ export class AuctionsController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(): Promise<Auction[]> {
-    console.log('get all')
     return this.auctionsService.findAll(['bids', 'bids.bidder', 'winner'])
   }
 

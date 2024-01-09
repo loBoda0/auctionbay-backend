@@ -137,7 +137,7 @@ export class AuctionsService extends AbstractService {
 
   async updateAuctionImageId(auctionId: string, userId: string, image: string): Promise<Auction> {
     const auction = await this.findById(auctionId) as Auction
-    if (auction.auctioner.toString() == userId) {
+    if (auction.auctioner.id == userId) {
       return this.update(userId, auctionId, { image })
     }
   }
