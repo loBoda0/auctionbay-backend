@@ -6,10 +6,10 @@ import { Repository } from 'typeorm'
 export abstract class AbstractService {
   constructor(protected readonly repository: Repository<any>) {}
 
-  async findAll(): Promise<any[]> {
+  async findAll(relations = []): Promise<any[]> {
     try {
       return this.repository.find({
-        loadRelationIds: true,
+        relations,
       })
     } catch (error) {
       throw new InternalServerErrorException('Something went wrong while searching for a list of elements.')

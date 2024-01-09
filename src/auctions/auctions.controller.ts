@@ -16,7 +16,8 @@ export class AuctionsController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(): Promise<Auction[]> {
-    return this.auctionsService.findAll()
+    console.log('get all')
+    return this.auctionsService.findAll(['bids', 'bids.bidder', 'winner'])
   }
 
   @Post()
@@ -51,20 +52,20 @@ export class AuctionsController {
   @Get('my')
   @HttpCode(HttpStatus.OK)
   async findMyAuctions(@Req() req: UserSubRequest): Promise<Auction[]> {
-    return this.auctionsService.findMyAuctions(req.user.sub)
+    return this.auctionsService.findMyAuctions(req.user.sub, ['bids', 'bids.bidder', 'winner'])
   }
 
   @Get('bidding')
   @HttpCode(HttpStatus.OK)
   async findRelations(@Req() req: UserSubRequest): Promise<Auction[]> {
-    return this.auctionsService.findBiddingAuctions(req.user.sub)
+    return this.auctionsService.findBiddingAuctions(req.user.sub, ['bids', 'bids.bidder', 'winner'])
   }
 
   @Get('won')
   @HttpCode(HttpStatus.OK)
   async findWonAuctions(@Req() req: UserSubRequest): Promise<Auction[]> {
     const user = await this.usersService.findById(req.user.sub)
-    return this.auctionsService.findWonAuctions(user)
+    return this.auctionsService.findWonAuctions(user, ['bids', 'bids.bidder', 'winner'])
   }
 
   @Post('upload/:id')

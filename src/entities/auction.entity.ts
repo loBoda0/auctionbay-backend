@@ -24,7 +24,9 @@ export class Auction extends Base {
   @Column('boolean', {default: true})
   is_active: boolean
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, {
+    eager: true
+  })
   @JoinColumn({ name: 'user_id'})
   auctioner: User
 

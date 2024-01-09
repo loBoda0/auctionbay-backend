@@ -15,7 +15,7 @@ export class AuctionsService extends AbstractService {
     super(auctionsRepository)
   }
 
-  async findMyAuctions(userId: string): Promise<Auction[]> {
+  async findMyAuctions(userId: string, relations = []): Promise<Auction[]> {
     const user = await this.getUser(userId)
     try {
       return this.auctionsRepository.find({
@@ -24,14 +24,14 @@ export class AuctionsService extends AbstractService {
             id: userId
           }
         },
-        loadRelationIds: true
+        relations
       })
     } catch (error) {
       throw new InternalServerErrorException('Something went wrong while fetching my auctions.')
     }
   }
 
-  async findBiddingAuctions(userId: string): Promise<Auction[]> {
+  async findBiddingAuctions(userId: string, relations = []): Promise<Auction[]> {
     try {
       return this.auctionsRepository.find({
         where: {
@@ -42,14 +42,14 @@ export class AuctionsService extends AbstractService {
           },
           is_active: true
         },
-        loadRelationIds: true
+        relations
       })
     } catch (error) {
       throw new InternalServerErrorException('Something went wrong while fetching bidding auctions.')
     }
   }
 
-  async findWonAuctions(user: User): Promise<Auction[]> {
+  async findWonAuctions(user: User, relations = []): Promise<Auction[]> {
     try {
       return this.auctionsRepository.find({
         where: {
@@ -57,7 +57,8 @@ export class AuctionsService extends AbstractService {
             id: user.id
           },
           is_active: false
-        }
+        },
+        relations
       })
     } catch (error) {
       console.log(error)
