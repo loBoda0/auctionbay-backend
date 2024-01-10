@@ -8,6 +8,7 @@ import { CreateAuctionDto } from './dto/create-auction.dto';
 import { UpdateAuctionDto } from './dto/update-auction.dto';
 import { User } from 'src/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class AuctionsService extends AbstractService {
@@ -146,4 +147,14 @@ export class AuctionsService extends AbstractService {
     return await this.usersService.findById(user)
   }
 
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async updateAuctionStatus(): Promise<void> {
+    const currentDate = new Date();
+    await this.auctionsRepository
+      .createQueryBuilder()
+      .update(Auction)
+      .set({ is_active: false })
+      .where('end_date < :currentDate', { currentDate })
+      .execute();
+  }
 }

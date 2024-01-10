@@ -30,7 +30,6 @@ export class UsersService extends AbstractService {
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = (await this.findById(id)) as User
     const { email, password, new_password, confirm_password, ...data } = updateUserDto
-    console.log(password)
     if ( email && user.email !== email) {
       user.email = email
     }
