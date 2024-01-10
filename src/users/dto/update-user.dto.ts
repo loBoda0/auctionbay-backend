@@ -17,14 +17,18 @@ export class UpdateUserDto {
 
   @ValidateIf((o) => typeof o.password === 'string' && o.password.length > 0)
   @IsOptional()
+  password?: string
+
+  @ValidateIf((o) => typeof o.password === 'string' && o.password.length > 0)
+  @IsOptional()
   @Matches(/^(?=.*\d)[A-Za-z.\s_-]+[\w~@#$%^&*+=`|{}:;!.?"()[\]-]{6,}/, {
     message:
       'Password must have at least one number, lower or upper case letter and it has to be longer than 5 characters.',
   })
-  password?: string
+  new_password?: string
 
   @ValidateIf((o) => typeof o.confirm_password === 'string' && o.confirm_password.length > 0)
   @IsOptional()
-  @Match(UpdateUserDto, (field) => field.password, { message: 'Passwords do not match.' })
+  @Match(UpdateUserDto, (field) => field.new_password, { message: 'Passwords do not match.' })
   confirm_password?: string
 }

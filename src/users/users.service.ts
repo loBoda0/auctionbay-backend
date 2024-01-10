@@ -29,18 +29,22 @@ export class UsersService extends AbstractService {
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = (await this.findById(id)) as User
-    const { email, password, confirm_password, ...data } = updateUserDto
-    if (user.email !== email && email) {
+    const { email, password, new_password, confirm_password, ...data } = updateUserDto
+    console.log(password)
+    if ( email && user.email !== email) {
       user.email = email
     }
-    if (password && confirm_password) {
-      if (password !== confirm_password) {
+    if (password && new_password && confirm_password) {
+      if (new_password !== confirm_password) {
         throw new BadRequestException('Passwords do not match.')
       }
-      if (await compareHash(password, user.password)) {
+      if (await compareHash(new_password, user.password)) {
         throw new BadRequestException('New password cannot be the same as your old password.')
       }
-      user.password = await  hash(password)
+      if (!await compareHash(password, user.password)) {
+        throw new BadRequestException('Please enter your current password.')
+      }
+      user.password = await  hash(new_password)
     }
     try {
       Object.entries(data).map((entry) => {
