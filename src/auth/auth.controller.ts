@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { User } from 'src/entities/user.entity';
@@ -24,7 +24,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(@Req() req: RequestWithUser, @Res({ passthrough: true }) res: Response): Promise<User> {
     const access_token = await this.authService.generateJwt(req.user)
-    delete req.user.password
     res.cookie('access_token', access_token, {
       httpOnly: true,
       sameSite: 'none',
@@ -33,5 +32,16 @@ export class AuthController {
     return req.user
   }
 
+/*   @Get('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refreshToken(@Req() req: RequestWithUser, @Res({ passthrough: true }) res: Response) {
+    const access_token = await this.authService.generateJwt(req.user)
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    })
+    return { data: access_token}
+  }  */
 }
 
