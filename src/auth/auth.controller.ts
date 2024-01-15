@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { User } from 'src/entities/user.entity';
@@ -43,5 +43,19 @@ export class AuthController {
     })
     return { data: access_token}
   }  */
+
+  @Public()
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  async forgottenPassword(@Body('email') email) {
+    this.authService.sendResetPassEmail(email)
+  } 
+
+  @Public()
+  @Post('forgot-password/:id')
+  @HttpCode(HttpStatus.OK)
+  async setNewPassword(@Body() data, @Param('id') id: string) {
+    this.authService.setNewPassword(id, data)
+  } 
 }
 

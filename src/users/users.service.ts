@@ -33,17 +33,24 @@ export class UsersService extends AbstractService {
     if ( email && user.email !== email) {
       user.email = email
     }
-    if (password && new_password && confirm_password) {
-      if (new_password !== confirm_password) {
-        throw new BadRequestException('Passwords do not match.')
+    if (password && confirm_password) {
+      if (new_password) {
+        if (new_password !== confirm_password) {
+          throw new BadRequestException('Passwords do not match.')
+        }
+        if (await compareHash(new_password, user.password)) {
+          throw new BadRequestException('New password cannot be the same as your old password.')
+        }
+        if (!await compareHash(password, user.password)) {
+          throw new BadRequestException('Please enter your current password.')
+        }
+        user.password = await  hash(new_password)
+      } else {
+        if (password !== confirm_password) {
+          throw new BadRequestException('Passwords do not match.')
+        }
+        user.password = await hash(password)
       }
-      if (await compareHash(new_password, user.password)) {
-        throw new BadRequestException('New password cannot be the same as your old password.')
-      }
-      if (!await compareHash(password, user.password)) {
-        throw new BadRequestException('Please enter your current password.')
-      }
-      user.password = await  hash(new_password)
     }
     try {
       Object.entries(data).map((entry) => {
@@ -51,6 +58,7 @@ export class UsersService extends AbstractService {
       })
       return this.usersRepository.save(user)
     } catch (error) {
+      console.log(error)
       if (error?.code === PostgressErrorCode.UniqueViolation) {
         throw new BadRequestException('User with that email already exists.')
       }
