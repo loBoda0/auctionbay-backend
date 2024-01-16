@@ -7,6 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { PostgressErrorCode } from 'src/helpers/postgressErrorCode.enum';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { compareHash, hash } from 'src/utils/bcrypt';
+import Logging from 'src/library/Logging';
 
 @Injectable()
 export class UsersService extends AbstractService {
@@ -23,6 +24,7 @@ export class UsersService extends AbstractService {
       const newUser = this.usersRepository.create({ ...createUserDto})
       return this.usersRepository.save(newUser)
     } catch (error) {
+      Logging.error(error)
       throw new BadRequestException('Something went wrong while creating a new user.')
     }
   }
@@ -58,7 +60,7 @@ export class UsersService extends AbstractService {
       })
       return this.usersRepository.save(user)
     } catch (error) {
-      console.log(error)
+      Logging.error(error)
       if (error?.code === PostgressErrorCode.UniqueViolation) {
         throw new BadRequestException('User with that email already exists.')
       }

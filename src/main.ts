@@ -3,11 +3,12 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as cookieParser from 'cookie-parser';
 import { join } from 'path';
+import Logging from './library/Logging';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
-    origin: ['http://localhost:5173'],
+    origin: [process.env.FRONTEND],
     credentials: true,
   })
   app.useStaticAssets(join(__dirname, '..', 'files'), {
@@ -16,5 +17,7 @@ async function bootstrap() {
   });
   app.use(cookieParser())
   await app.listen(3000);
+
+  Logging.info(`App is listening on: ${await app.getUrl()}`);
 }
 bootstrap();

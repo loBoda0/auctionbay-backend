@@ -6,6 +6,7 @@ import { UsersService } from 'src/users/users.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import resetPassword from 'src/utils/resetPassword';
+import Logging from 'src/library/Logging';
 
 @Injectable()
 export class AuthService {
@@ -47,7 +48,8 @@ export class AuthService {
       this.usersService.update(payload.id, user)
       
     } catch (error) {
-      console.log(error)
+      Logging.error(error)
+      throw new BadRequestException("The new password cannot be set")
     }
   }
 

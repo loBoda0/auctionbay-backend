@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { AuctionsService } from 'src/auctions/auctions.service';
 import { Auction } from 'src/entities/auction.entity';
+import Logging from 'src/library/Logging';
 
 @Injectable()
 export class BidsService extends AbstractService {
@@ -26,6 +27,7 @@ export class BidsService extends AbstractService {
       this.auctionsRepository.save(auction)
       return this.bidsRepository.save(bid)
     } catch (error) {
+      Logging.error(error)
       throw new BadRequestException('Something went wrong while posting a bid.')
     }
   }

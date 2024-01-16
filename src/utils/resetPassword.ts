@@ -1,4 +1,5 @@
 import * as nodemailer from 'nodemailer'
+import Logging from 'src/library/Logging'
 
 const resetPassword = async (email: string, token: string) => {
   try {
@@ -16,7 +17,7 @@ const resetPassword = async (email: string, token: string) => {
      // verify connection configuration
      transporter.verify(function (error, success) {
       if (error) {
-        console.log(error);
+        Logging.error(error)
       } else {
         console.log('Server is ready to take our messages');
       }
@@ -34,11 +35,12 @@ const resetPassword = async (email: string, token: string) => {
       await transporter.sendMail(mailOptions);
       console.log(`Password reset email sent to ${email} with reset token: ${token}`);
     } catch (error) {
+      Logging.error(error)
       console.error(`Error sending password reset email: ${error.message}`);
       throw new Error('Error sending password reset email');
     }
   } catch (error) {
-    console.log(error)
+    Logging.error(error)
   }
 }
 

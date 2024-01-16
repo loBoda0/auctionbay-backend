@@ -9,6 +9,7 @@ import { UpdateAuctionDto } from './dto/update-auction.dto';
 import { User } from 'src/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import Logging from 'src/library/Logging';
 
 @Injectable()
 export class AuctionsService extends AbstractService {
@@ -28,6 +29,7 @@ export class AuctionsService extends AbstractService {
         relations
       })
     } catch (error) {
+      Logging.error(error)
       throw new InternalServerErrorException('Something went wrong while fetching my auctions.')
     }
   }
@@ -46,6 +48,7 @@ export class AuctionsService extends AbstractService {
         relations
       })
     } catch (error) {
+      Logging.error(error)
       throw new InternalServerErrorException('Something went wrong while fetching bidding auctions.')
     }
   }
@@ -62,7 +65,7 @@ export class AuctionsService extends AbstractService {
         relations
       })
     } catch (error) {
-      console.log(error)
+      Logging.error(error)
       throw new InternalServerErrorException('Something went wrong while fetching data.')
     }
   }
@@ -73,6 +76,7 @@ export class AuctionsService extends AbstractService {
 
       return this.auctionsRepository.save(auction)
     } catch (error) {
+      Logging.error(error)
       throw new BadRequestException('Something went wrong while creating a new auction.')
     }
   }
@@ -93,7 +97,7 @@ export class AuctionsService extends AbstractService {
       }
       return this.auctionsRepository.save(updatedAuction)
     } catch (error) {
-      console.log(error)
+      Logging.error(error)
       throw new BadRequestException("Something went wrong")
     }
    
@@ -108,6 +112,7 @@ export class AuctionsService extends AbstractService {
 
       return this.auctionsRepository.delete(id)
     } catch (error) {
+      Logging.error(error)
       throw new BadRequestException("Something went wrong")
     }
   }
@@ -132,6 +137,7 @@ export class AuctionsService extends AbstractService {
         },
       }
     } catch (error) {
+      Logging.error(error)
       throw new InternalServerErrorException('Something went wrong while searching for a paginated elements.')
     }
   }
