@@ -5,6 +5,8 @@ import { compareHash, hash } from 'src/utils/bcrypt';
 import { UsersService } from 'src/users/users.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import resetPassword from 'src/utils/resetPassword';
+import Logging from 'src/library/Logging';
 
 @Injectable()
 export class AuthService {
@@ -37,6 +39,33 @@ export class AuthService {
 
   async generateJwt(user: User): Promise<string> {
     return this.jwtService.signAsync({ sub: user.id, name: user.email })
+  }
+
+  async setNewPassword(token: string, data: any) {
+    try {
+      const payload = await this.jwtService.verifyAsync(token)
+      const user = {...data, ...payload}
+      this.usersService.update(payload.id, user)
+      
+    } catch (error) {
+      Logging.error(error)
+      throw new BadRequestException("The new password cannot be set")
+    }
+  }
+
+  async sendResetPassEmail(email: string) {
+    const user = await this.usersService.findBy({ email: email }) as User
+    if (!user) {
+      throw new BadRequestException('Invalid credentials.')
+    }
+    const id = user.id
+    const payload = { email, id }
+    
+    const expiresIn = 3600
+
+    const token = this.jwtService.sign(payload, { expiresIn })
+
+    resetPassword(email, token)
   }
 }
 

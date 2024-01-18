@@ -7,6 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { PostgressErrorCode } from 'src/helpers/postgressErrorCode.enum';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { compareHash, hash } from 'src/utils/bcrypt';
+import Logging from 'src/library/Logging';
 
 @Injectable()
 export class UsersService extends AbstractService {
@@ -23,24 +24,35 @@ export class UsersService extends AbstractService {
       const newUser = this.usersRepository.create({ ...createUserDto})
       return this.usersRepository.save(newUser)
     } catch (error) {
+      Logging.error(error)
       throw new BadRequestException('Something went wrong while creating a new user.')
     }
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = (await this.findById(id)) as User
-    const { email, password, confirm_password, ...data } = updateUserDto
-    if (user.email !== email && email) {
+    const { email, password, new_password, confirm_password, ...data } = updateUserDto
+    if ( email && user.email !== email) {
       user.email = email
     }
     if (password && confirm_password) {
-      if (password !== confirm_password) {
-        throw new BadRequestException('Passwords do not match.')
+      if (new_password) {
+        if (new_password !== confirm_password) {
+          throw new BadRequestException('Passwords do not match.')
+        }
+        if (await compareHash(new_password, user.password)) {
+          throw new BadRequestException('New password cannot be the same as your old password.')
+        }
+        if (!await compareHash(password, user.password)) {
+          throw new BadRequestException('Please enter your current password.')
+        }
+        user.password = await  hash(new_password)
+      } else {
+        if (password !== confirm_password) {
+          throw new BadRequestException('Passwords do not match.')
+        }
+        user.password = await hash(password)
       }
-      if (await compareHash(password, user.password)) {
-        throw new BadRequestException('New password cannot be the same as your old password.')
-      }
-      user.password = await  hash(password)
     }
     try {
       Object.entries(data).map((entry) => {
@@ -48,6 +60,7 @@ export class UsersService extends AbstractService {
       })
       return this.usersRepository.save(user)
     } catch (error) {
+      Logging.error(error)
       if (error?.code === PostgressErrorCode.UniqueViolation) {
         throw new BadRequestException('User with that email already exists.')
       }

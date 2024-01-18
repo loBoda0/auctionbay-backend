@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { Options, diskStorage } from "multer";
 import path, { extname } from "path";
+import Logging from 'src/library/Logging';
 
 type validFileExtensionsType = 'png' | 'jpg' | 'jpeg'
 type validMimeType = 'image/png' | 'image/jpg' | 'image/jpeg'
@@ -39,6 +40,6 @@ export const removeFile = (fullFilePath: string): void => {
   try {
     fs.unlinkSync(fullFilePath)
   } catch (error) {
-    console.log(error)
+    Logging.error(error)
   }
 }

@@ -1,17 +1,19 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common'
 import { PaginatedResult } from '../interfaces/paginated-result.interface'
 import { Repository } from 'typeorm'
+import Logging from 'src/library/Logging'
 
 @Injectable()
 export abstract class AbstractService {
   constructor(protected readonly repository: Repository<any>) {}
 
-  async findAll(): Promise<any[]> {
+  async findAll(relations = []): Promise<any[]> {
     try {
       return this.repository.find({
-        loadRelationIds: true,
+        relations,
       })
     } catch (error) {
+      Logging.error(error)
       throw new InternalServerErrorException('Something went wrong while searching for a list of elements.')
     }
   }
@@ -22,6 +24,7 @@ export abstract class AbstractService {
         where: condition,
       })
     } catch (error) {
+      Logging.error(error)
       throw new InternalServerErrorException(
         `Something went wrong while searching for an element with condition: ${condition}.`,
       )
@@ -32,14 +35,14 @@ export abstract class AbstractService {
     try {
       const element = await this.repository.findOne({
         where: { id },
-        relations,
-        loadRelationIds: true,
+        relations
       })
       if (!element) {
         throw new BadRequestException(`Cannot find element with id: ${id}`)
       }
       return element
     } catch (error) {
+      Logging.error(error)
       throw new InternalServerErrorException(`Something went wrong while searching for an element with an id: ${id}.`)
     }
   }
@@ -49,6 +52,7 @@ export abstract class AbstractService {
     try {
       return this.repository.remove(element)
     } catch (error) {
+      Logging.error(error)
       throw new InternalServerErrorException('Something went wrong while deleting a element.')
     }
   }
@@ -72,6 +76,7 @@ export abstract class AbstractService {
         },
       }
     } catch (error) {
+      Logging.error(error)
       throw new InternalServerErrorException('Something went wrong while searching for a paginated elements.')
     }
   }
