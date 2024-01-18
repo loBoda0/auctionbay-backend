@@ -91,7 +91,6 @@ export class AuctionsService extends AbstractService {
         ...auction,
         title: updateAuctionDto.title !== undefined ? updateAuctionDto.title : auction.title,
         description: updateAuctionDto.description !== undefined ? updateAuctionDto.description : auction.description,
-        starting_price: updateAuctionDto.starting_price !== undefined ? updateAuctionDto.starting_price : auction.starting_price,
         end_date: updateAuctionDto.end_date !== undefined ? updateAuctionDto.end_date : auction.end_date,
         image: updateAuctionDto.image !== undefined ? updateAuctionDto.image : auction.image,
       }
