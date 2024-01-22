@@ -21,6 +21,10 @@ export class UpdateUserDto {
   avatar?: string
   
   @ApiProperty({ required: false })
+  @IsOptional()
+  refresh_token?: string | null
+  
+  @ApiProperty({ required: false })
   @ValidateIf((o) => typeof o.password === 'string' && o.password.length > 0)
   @IsOptional()
   password?: string

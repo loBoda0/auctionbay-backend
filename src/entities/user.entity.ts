@@ -21,4 +21,8 @@ export class User extends Base {
   @Column({ nullable: true })
   @Exclude()
   password: string
+
+  @Column({ nullable: true })
+  @Exclude() 
+  refresh_token: string | null
 }

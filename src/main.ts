@@ -9,7 +9,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
-    origin: [process.env.FRONTEND],
+    origin: [process.env.FRONTEND, 'http://localhost:5173'],
     credentials: true,
   })
   app.useStaticAssets(join(__dirname, '..', 'files'), {

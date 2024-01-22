@@ -10,6 +10,7 @@ import { AuctionsModule } from './auctions/auctions.module';
 import { BidsModule } from './bids/bids.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { UtilsModule } from './utils/utils.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
     UsersModule,
     AuthModule,
     AuctionsModule,
-    BidsModule
+    BidsModule,
+    UtilsModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -4,15 +4,18 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { User } from 'src/entities/user.entity';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { Public } from 'src/decorators/public.decorator';
-import { RequestWithUser } from 'src/interfaces/auth.interface';
+import { JwtType, RequestWithUser, TokenPayload } from 'src/interfaces/auth.interface';
 import { Response } from 'express';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login-user.dto';
+import { UtilsService } from 'src/utils/utils.service';
+import { UsersService } from 'src/users/users.service';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 
 @ApiTags('Authentication')
 @Controller('')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private utilsService: UtilsService, private usersService: UsersService) {}
 
   @Public()
   @ApiOperation({ summary: 'Register a new user' })
@@ -35,30 +38,46 @@ export class AuthController {
     type: LoginUserDto,
     description: 'User logged in successfully',
   })
-  
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Req() req: RequestWithUser, @Res({ passthrough: true }) res: Response): Promise<User> {
-    const access_token = await this.authService.generateJwt(req.user)
-    res.cookie('access_token', access_token, {
-      httpOnly: true,
-      sameSite: 'none',
-      secure: true,
-    });
-    return req.user
-  }
-
-/*   @Get('refresh')
-  @HttpCode(HttpStatus.OK)
-  async refreshToken(@Req() req: RequestWithUser, @Res({ passthrough: true }) res: Response) {
-    const access_token = await this.authService.generateJwt(req.user)
+    const user = await this.usersService.findById(req.user.sub)
+    const access_token = await this.utilsService.generateToken(user.id, user.email, JwtType.ACCESS_TOKEN)
+    const refresh_token = await this.utilsService.generateToken(user.id, user.email, JwtType.REFRESH_TOKEN)
+    await this.usersService.update(user.id, { refresh_token })
     res.cookie('access_token', access_token, {
       httpOnly: true,
       sameSite: 'none',
       secure: true,
     })
-    return { data: access_token}
-  }  */
+    res.cookie('refresh_token', refresh_token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    })
+    return user
+  }
+
+  @Public()
+  @Get('refresh')
+  @UseGuards(JwtRefreshGuard)
+  @HttpCode(HttpStatus.OK)
+  async refreshToken(@Req() req: RequestWithUser, @Res({ passthrough: true }) res: Response) {
+    const user = await this.usersService.findById(req.user.sub)
+    const access_token = await this.utilsService.generateToken(user.id, user.email, JwtType.ACCESS_TOKEN)
+    const refresh_token = await this.utilsService.generateToken(user.id, user.email, JwtType.REFRESH_TOKEN)
+    await this.usersService.update(user.id, { refresh_token })
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    })
+    res.cookie('refresh_token', refresh_token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    })
+  } 
 
   @Public()
   @ApiOperation({ summary: 'Send password reset email' })

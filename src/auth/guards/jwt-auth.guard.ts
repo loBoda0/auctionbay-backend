@@ -2,7 +2,6 @@ import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/com
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { IS_PUBLIC_KEY } from 'src/decorators/public.decorator';
 
@@ -12,11 +11,11 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super()
   }
 
-  async canActivate(context: ExecutionContext) {
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
-    ]);
+    ])
     
     const request = context.switchToHttp().getRequest()
 
@@ -24,17 +23,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     try {
       const access_token = request.cookies['access_token']
-      const payload = await this.jwtService.verifyAsync(
-        access_token, 
-        {
-          secret: process.env.JWT_SECRET
-        }
-      )
-      request.user = payload
-      return !!this.jwtService.verify(access_token)
-    } catch (error) {
-      console.log(error)
-      return false
+      if (!access_token || !!!this.jwtService.verify(access_token)) {
+        throw new UnauthorizedException()
+      }
+      
+      return super.canActivate(context)
+      } catch (error) {
+        throw new UnauthorizedException()
     }
   }
 }

@@ -18,7 +18,6 @@ export class AuctionsService extends AbstractService {
   }
 
   async findMyAuctions(userId: string, relations = []): Promise<Auction[]> {
-    const user = await this.getUser(userId)
     try {
       return this.auctionsRepository.find({
         where: {

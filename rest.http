@@ -1,0 +1,20 @@
+### POST /auth/login
+POST http://localhost:8080/api/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+      "email": "test@test.com",
+      "password": "123456"
+}
+
+### GET /
+GET http://localhost:8080/api/auth HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4ZGEyM2RhNi02OWE2LTRkYzEtOTE5Zi1iZDJlZTY5Yjc4MGUiLCJuYW1lIjoibmVqY3JvZ2Vsc2VrMEBnbWFpbC5jb20iLCJ0eXBlIjoiQUNDRVNTX1RPS0VOIiwiaWF0IjoxNzA0NzQyODcwLCJleHAiOjE3MDQ3NDM3NzB9.xErdhjA7HCNRtdYgRc5Bk45W90ZVz3ovO6we_jw67fk
+
+### POST /auth/refresh-tokens
+POST http://localhost:8080/api/auth/refresh-tokens HTTP/1.1
+Content-Type: application/json
+
+{
+      "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5ODYwNWM4My1mODFkLTQ5NjktOTIyMi1iOTMxMmYyOGQ0MWYiLCJuYW1lIjoibmVqY3JvZ2Vsc2VrMEBnbWFpbC5jb20iLCJ0eXBlIjoiUkVGUkVTSF9UT0tFTiIsImlhdCI6MTcwNDU4MDI3OSwiZXhwIjoxNzA0NTgwMzk5fQ.7BpDXQW31ZVGrunn4BxiLTZedjLiWc5YIynW9LbfBCE"
+}

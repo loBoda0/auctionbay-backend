@@ -28,7 +28,7 @@ const resetPassword = async (email: string, token: string) => {
       to: email,
       subject: 'Password Reset',
       html: `<p>Click the following link to reset your password:</p>
-             <a href="http://localhost:5173/reset-password/${token}">Reset Password</a>`,
+             <a href="${process.env.FRONTEND}/reset-password/${token}">Reset Password</a>`,
     }
 
     try {

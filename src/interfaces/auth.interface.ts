@@ -2,12 +2,12 @@ import  { User } from '../entities/user.entity'
 import { Request } from 'express'
 
 export interface TokenPayload {
-  name: string
+  email: string
   sub: string
 }
 
 export interface RequestWithUser extends Request {
-  user: User
+  user: TokenPayload
 }
 
 export interface UserSubRequest {
@@ -16,4 +16,5 @@ export interface UserSubRequest {
 
 export enum JwtType {
   ACCESS_TOKEN = 'ACCESS_TOKEN',
+  REFRESH_TOKEN = 'REFRESH_TOKEN',
 }
