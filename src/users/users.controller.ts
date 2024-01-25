@@ -19,7 +19,7 @@ export class UsersController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async getUser(@Req() req: UserSubRequest): Promise<User> {
-    return this.usersService.findById(req.user.sub)
+    return this.usersService.findById(req.user.id)
   }
   
   @ApiOperation({ description: 'Get user by id' })
@@ -78,7 +78,7 @@ export class UsersController {
     const imagesFolderPath = join(process.cwd(), 'files')
     const fullImagePath = join(imagesFolderPath + '/' + file.filename)
     if (await isFileExtensionSafe(fullImagePath)) {
-      return this.usersService.updateUserImageId(req.user.sub, filename)
+      return this.usersService.updateUserImageId(req.user.id, filename)
     }
     removeFile(fullImagePath)
     throw new BadRequestException('File content does not match extension!')

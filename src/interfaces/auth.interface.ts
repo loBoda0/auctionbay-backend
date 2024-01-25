@@ -11,7 +11,7 @@ export interface RequestWithUser extends Request {
 }
 
 export interface UserSubRequest {
-  user: { sub: string }
+  user: { id: string }
 }
 
 export enum JwtType {

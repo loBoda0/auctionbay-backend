@@ -37,7 +37,7 @@ export class AuctionsController {
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @Post()
   async createAuction(@Req() req: UserSubRequest, @Body() createAuctionDto: CreateAuctionDto): Promise<Auction> {
-    const user = await this.usersService.findById(req.user.sub)
+    const user = await this.usersService.findById(req.user.id)
     const updatedCreateAuctionDto = {
       ...createAuctionDto,
       auctioner: user
@@ -63,7 +63,7 @@ export class AuctionsController {
     const updatedUpdateAuctionDto = {
       ...updateAuctionDto,
     }
-    return this.auctionsService.update(req.user.sub, id, updatedUpdateAuctionDto)
+    return this.auctionsService.update(req.user.id, id, updatedUpdateAuctionDto)
   }
 
   
@@ -76,32 +76,32 @@ export class AuctionsController {
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @Delete(':id')
   async deleteAuction(@Req() req: UserSubRequest, @Param('id') id: string): Promise<any> {
-    return this.auctionsService.delete(req.user.sub, id)
+    console.log(req.user.id)
+    return this.auctionsService.delete(req.user.id, id)
   }
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'Retrieve auctions by a specific user' })
   @Get('my')
   async findMyAuctions(@Req() req: UserSubRequest): Promise<Auction[]> {
-    return this.auctionsService.findMyAuctions(req.user.sub, ['bids', 'bids.bidder', 'winner'])
+    return this.auctionsService.findMyAuctions(req.user.id, ['bids', 'bids.bidder', 'winner'])
   }
   
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'Retrieve bidding auctions by a specific user' })
   @Get('bidding')
   async findRelations(@Req() req: UserSubRequest): Promise<Auction[]> {
-    return this.auctionsService.findBiddingAuctions(req.user.sub, ['bids', 'bids.bidder', 'winner'])
+    return this.auctionsService.findBiddingAuctions(req.user.id, ['bids', 'bids.bidder', 'winner'])
   }
   
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'Retrieve won auctions by a specific user' })
   @Get('won')
   async findWonAuctions(@Req() req: UserSubRequest): Promise<Auction[]> {
-    const user = await this.usersService.findById(req.user.sub)
+    const user = await this.usersService.findById(req.user.id)
     return this.auctionsService.findWonAuctions(user, ['bids', 'bids.bidder', 'winner'])
   }
   
-  @UseInterceptors(FileInterceptor('image', saveImageToStorage))
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ description: 'Upload an image for auction' })
   @ApiConsumes('multipart/form-data')
@@ -125,7 +125,8 @@ export class AuctionsController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @Post('upload/:id')
-  async upload(@UploadedFile() file, @Req() req: UserSubRequest, @Param('id') id: string): Promise<Auction> {
+  @UseInterceptors(FileInterceptor('image', saveImageToStorage))
+  async upload(@UploadedFile() file: Express.Multer.File, @Req() req: UserSubRequest, @Param('id') id: string): Promise<Auction> {
     const filename = file?.filename
 
     if (!filename) throw new BadRequestException('File must be a png, jpg/jpeg')
@@ -133,7 +134,7 @@ export class AuctionsController {
     const imagesFolderPath = join(process.cwd(), 'files')
     const fullImagePath = join(imagesFolderPath + '/' + file.filename)
     if (await isFileExtensionSafe(fullImagePath)) {
-      return this.auctionsService.updateAuctionImageId(id, req.user.sub, filename)
+      return this.auctionsService.updateAuctionImageId(id, req.user.id, filename)
     }
     removeFile(fullImagePath)
     throw new BadRequestException('File content does not match extension!')

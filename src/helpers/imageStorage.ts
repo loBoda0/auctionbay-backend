@@ -32,7 +32,7 @@ export const saveImageToStorage: Options = {
 export const isFileExtensionSafe = async (fullFilePath: string): Promise<boolean> => {
   const allowedExtensions = ['.jpg', '.jpeg', '.png'];
   const fileExtension = extname(fullFilePath).toLowerCase();
-
+console.log(allowedExtensions.includes(fileExtension))
   return allowedExtensions.includes(fileExtension);
 }
 
