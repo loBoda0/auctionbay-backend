@@ -76,6 +76,7 @@ export class AuctionsController {
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @Delete(':id')
   async deleteAuction(@Req() req: UserSubRequest, @Param('id') id: string): Promise<any> {
+    console.log(req.user.id)
     return this.auctionsService.delete(req.user.id, id)
   }
 
